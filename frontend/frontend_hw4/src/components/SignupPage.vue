@@ -27,68 +27,55 @@
         placeholder="Confirm Password"
       />
       <br>
-      <button @click="validateSignup">Submit</button>
+      <button @click="SignUp">Submit</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'SignupPage',
-  data() {
-    return {
-      email: "",
-      password: "",
-      confirmPassword: "",
-      showPassword: false,
-    };
-  },
-  methods: {
-    validateSignup() {
-      const errors = [];
-      let errorMessage = "";
+name: "Signup", 
 
-      // Password validation
-      if (this.password.length < 8 || this.password.length >= 15) {
-        errors.push("Password must be at least 8 and less than 15 characters long.");
-      }
-      if (!/^[A-Z]/.test(this.password)) {
-        errors.push("Password must start with an uppercase letter.");
-      }
-      if (!/[A-Z]/.test(this.password)) {
-        errors.push("Password must include at least one uppercase letter.");
-      }
-      if ((this.password.match(/[a-z]/g) || []).length < 2) {
-        errors.push("Password must include at least two lowercase letters.");
-      }
-      if (!/\d/.test(this.password)) {
-        errors.push("Password must include at least one numeric value.");
-      }
-      if (!/_/.test(this.password)) {
-        errors.push("Password must include the character '_'.");
-      }
+data: function() {
+  return {
+    email: '',
+    password: '',
+  }
+},
+methods: {
 
-      // Confirm password validation
-      if (this.password !== this.confirmPassword) {
-        errors.push("Passwords do not match.");
+SignUp() { // method is called when the "SignUp" button is clicked
+      // Basic form validation
+      if (!this.email || !this.password) {
+            console.error("Please fill in all fields");
+            return;
       }
-
-      // Display errors or success message
-      const valid = errors.length === 0;
-      if (!valid) {
-        errors.forEach((item) => {
-          errorMessage += `${item}\n`;
-        });
-        alert("The form contains errors:\n" + errorMessage);
-        return false;
-      } else {
-        alert("Signup successful!");
-        // Add signup logic here, e.g., API call
-        return true;
-      }
+      var data = {
+        email: this.email,
+        password: this.password
+      };
+      console.log(this.email)
+      fetch("http://localhost:3000/auth/signup", { //Uses the fetch API to send a POST request to the server 
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', 
+          body: JSON.stringify(data),
+        })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      this.$router.push("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
     },
-  },
-};
+  }, 
+  }
+
 </script>
 
 <style>

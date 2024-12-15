@@ -27,6 +27,17 @@ app.listen(port, () => {
     console.log("Server is listening to port " + port)
 });
 
+function authenticateToken(req, res, next) {
+    const token = req.cookies.jwt;
+    if (!token) return res.sendStatus(401); // if there isn't any token
+
+    jwt.verify(token, secret, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next(); // pass the execution off to whatever request the client intended
+    });
+}
+
 
 /* Handling HTTP requests */
 
@@ -64,6 +75,7 @@ app.get('/auth/authenticate', async(req, res) => {
 
 //Signing up
 app.post('/auth/signup', async (req,res) => {
+    console.log("jõusin siia!!!!")
     try{
         const {email,password} = req.body;
 
