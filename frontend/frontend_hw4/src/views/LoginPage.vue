@@ -22,27 +22,61 @@
           required
         />
       </div>
-      <button type="submit">Login</button>
+      <div class ="container">
+        <button @click="LogIn"  class="center">LogIn</button>
+        <button @click='this.$router.push("/signup")' class="center">SignUp</button>
+      </div>
     </form>
   </div>
 </template>
 
 <script>
-export default {
-  name: "LoginPage",
-  data() {
-    return {
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    handleLogin() {
-      console.log("Logging in with:", { email: this.email, password: this.password });
+  export default {
+  name: "Login", 
+  
+  data: function() {
+      return {
+     email: '',
+     password: '',
+    }
     },
-  },
-};
-</script>
+    methods: {
+  
+  
+  LogIn() { //called when the "LogIn" button is clicked
+        // Basic form validation
+        if (!this.email || !this.password) {
+          console.error("Please fill in all fields");
+          return;
+        }
+        var data = {
+          email: this.email,
+          password: this.password
+        };
+        // using Fetch - post method - send an HTTP post request to the specified URI with the defined body
+        fetch("http://localhost:3000/auth/login", { //Uses the fetch API to send a POST request to the server
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+            credentials: 'include', 
+            body: JSON.stringify(data),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+        console.log(data);
+        //this.$router.push("/");
+        location.assign("/");
+        })
+        .catch((e) => {
+          console.log(e);
+          console.log("error");
+        });
+      },
+    }, 
+    }
+  
+  </script>
 
 <style scoped>
 .login-container {
