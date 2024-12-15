@@ -13,6 +13,8 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/AddPost">AddPost</router-link></li>
           <li><router-link to="/signup">SignUp</router-link></li>
+          <li><router-link to="/login">Log In</router-link></li>
+          <li><router-link to="/contact">Contact Us</router-link></li>
         </ul>
       </nav>
     </div>

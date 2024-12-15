@@ -1,18 +1,23 @@
 <template>
   <div class="home">
-    <!-- Pass the postId prop to BlogPost component -->
-    <BlogPost :postId="1"/>
-    <BlogPost :postId="2" />
-    <BlogPost :postId="3" />
-    <BlogPost :postId="4" />
-    <BlogPost :postId="5" />
-    <BlogPost :postId="6" />
-    <BlogPost :postId="7" />
-    <BlogPost :postId="8" />
-    <BlogPost :postId="9" />
-    <BlogPost :postId="10" />
-    <!-- Reset all likes -->
-    <button class="reset-likes" @click="resetAllLikes">Reset All Likes</button>
+    <h1>Welcome to the Blog</h1>
+    <p>Explore the latest posts below:</p>
+
+    <!-- Blog Posts Loop -->
+    <div class="blog-posts">
+      <BlogPost
+        v-for="post in posts"
+        :key="post.id"
+        :postId="post.id"
+      />
+    </div>
+
+    <!-- Reset All Likes Button -->
+    <div class="reset-likes-container">
+      <button class="reset-likes" @click="resetAllLikes">
+        Reset All Likes
+      </button>
+    </div>
   </div>
 </template>
 

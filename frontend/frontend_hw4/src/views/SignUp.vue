@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import SignupPage from '@/components/LogIn.vue'
+import SignupPage from '@/components/SignupPage.vue'
 
 export default {
   components: {

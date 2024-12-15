@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <AppHeader  /> <!-- Use the Header component -->
-    <router-view /> <!-- The main content will be rendered here -->
+    <main class="content">
+      <router-view /> <!-- Dynamic page content -->
+    </main>
     <AppFooter  /> <!-- Use the Footer component -->
   </div>
 </template>
@@ -34,4 +36,5 @@ body, html {
   padding: 0; /* Remove default padding */
   box-sizing: border-box; /* Ensure consistent sizing */
 }
+
 </style>
