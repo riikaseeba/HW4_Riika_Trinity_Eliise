@@ -2,8 +2,8 @@
 
  const pool = new Pool({
      user: "postgres",
-     password: [your password],
-     database: "WAD",
+     password: "sql",
+     database: "homework4_WAD",
      host: "localhost",
      port: "5432"
  });
