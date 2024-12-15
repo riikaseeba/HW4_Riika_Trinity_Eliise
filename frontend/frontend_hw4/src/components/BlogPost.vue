@@ -31,21 +31,25 @@
 
 <script>
 export default {
-name: 'BlogPost',
-props: {
-  postId: Number // We expect the post ID to be passed as a prop
-},
-computed: {
-  post () {
-    // Directly accessing the post from the store's state using this.$store
-    return this.$store.state.posts.find(post => post.id === this.postId) || null
+  name: 'BlogPost',
+  props: {
+    postId: Number // We expect the post ID to be passed as a prop
+  },
+  computed: {
+    post () {
+      // Directly accessing the post from the store's state using this.$store
+      return this.$store.state.posts.find(post => post.id === this.postId) || null
+    },
+    formattedDate() {
+      // Format the date using a helper function
+      return this.formatDate(this.post.date);
+    }
+  },
+  methods: {
+    likePost () {
+      this.$store.dispatch('likePost', this.post.id)
+    }
   }
-},
-methods: {
-  likePost () {
-    this.$store.dispatch('likePost', this.post.id)
-  }
-}
 }
 </script>
 

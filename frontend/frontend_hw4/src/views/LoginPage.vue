@@ -22,7 +22,14 @@
           required
         />
       </div>
-      <button type="submit">Login</button>
+      <!-- Buttons Container -->
+      <div class="buttons-container">
+        <button type="submit" class="login-button">Login</button>
+        <span class="or-text">Or</span>
+        <router-link to="/signup">
+          <button type="button" class="signup-button">Sign Up</button>
+        </router-link>
+      </div>
     </form>
   </div>
 </template>

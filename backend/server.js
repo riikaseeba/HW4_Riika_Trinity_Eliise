@@ -11,7 +11,7 @@ const app = express();
 
 
 
-app.use(cors({origin: 'http://localhost8081',credentials: true}));
+app.use(cors({origin: 'http://localhost:8080',credentials: true}));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -195,6 +195,26 @@ app.delete('/api/posts/:id', async (req, res) => {
     }
 });
 
+// Endpoint to increment likes
+app.post('/api/posts/:id/like', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const updateLikes = await pool.query(
+            `UPDATE posts SET likes = likes + 1 WHERE id = $1 RETURNING *`,
+            [id]
+        );
+
+        if (updateLikes.rows.length === 0) {
+            return res.status(404).send({ error: "Post not found" });
+        }
+
+        res.status(200).json(updateLikes.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send({ error: "Error liking post" });
+    }
+});
 
 
 //loggout

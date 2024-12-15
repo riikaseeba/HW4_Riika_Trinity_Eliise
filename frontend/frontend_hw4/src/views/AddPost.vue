@@ -27,7 +27,16 @@ export default {
   methods: {
     handleSubmit() {
       console.log("Post added:", { content: this.content });
-      // lisa siia loogika
+      if (!this.content.trim()) {
+        alert("Content cannot be empty!");
+        return;
+      }
+      // Dispatch Vuex action to add the new post
+      this.$store.dispatch("addPost", this.content);
+      // Clear the input
+      this.content = "";
+      // Redirect to the posts page
+      this.$router.push("/");
     },
   },
 };

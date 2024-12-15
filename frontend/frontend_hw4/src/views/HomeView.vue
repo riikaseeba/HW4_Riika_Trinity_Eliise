@@ -2,6 +2,12 @@
   <div class="home">
     <h1>Welcome to the Blog</h1>
     <p>Explore the latest posts below:</p>
+    <!-- Header Section -->
+    <div class="header">
+      <button class="logout-btn" @click="logout">Logout</button>
+      <button class="add-btn" @click="goToAddPost">Add Post</button>
+      <button class="delete-all-btn" @click="deleteAllPosts">Delete All</button>
+    </div>
 
     <!-- Blog Posts Loop -->
     <div class="blog-posts">
@@ -9,15 +15,7 @@
         v-for="post in posts"
         :key="post.id"
         :postId="post.id"
-      />
-    </div>
-
-    <!-- Reset All Likes Button -->
-    <div class="reset-likes-container">
-      <button class="reset-likes" @click="resetAllLikes">
-        Reset All Likes
-      </button>
-    </div>
+      /></div>
   </div>
 </template>
 
@@ -39,23 +37,34 @@ export default {
     }
   },
   methods: {
-    resetAllLikes () {
-      // Dispatch Vuex action to reset all likes
-      this.$store.dispatch('resetLikes')
+    // Logout method
+    logout() {
+      // Clear the user session (example: clearing token or state)
+      this.$store.dispatch('logout');
+      this.$router.push('/login'); // Redirect to the login page
+    },
+    // Navigate to "Add Post" page
+    goToAddPost() {
+      this.$router.push('/AddPost');
+    },
+    // Delete all posts
+    deleteAllPosts() {
+      if (confirm('Are you sure you want to delete all posts?')) {
+        this.$store.dispatch('deleteAllPosts');
+      }
     }
   }
 }
 </script>
 <style scoped>
-/* Styling for the reset button container */
-.reset-likes-container {
+.header {
   display: flex;
   justify-content: center;
   margin: 40px 0;
 }
 
-/* Styling for the reset button */
-.reset-likes {
+
+.logout-btn, .add-btn, .delete-all-btn {
   background-color: #ff5722;
   color: white;
   border: none;
@@ -68,7 +77,7 @@ export default {
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.reset-likes:hover {
+.logout-btn:hover, .add-btn:hover, .delete-all-btn:hover {
   background-color: #e64a19;
   transform: translateY(-2px);
 }
