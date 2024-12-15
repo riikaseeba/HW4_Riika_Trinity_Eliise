@@ -75,7 +75,7 @@ app.get('/auth/authenticate', async(req, res) => {
 
 //Signing up
 app.post('/auth/signup', async (req,res) => {
-    console.log("jõusin siia!!!!")
+    console.log("You made it!!!!")
     try{
         const {email,password} = req.body;
 
@@ -122,109 +122,26 @@ app.post('/auth/login',async(req,res) =>{
 });
 
 
-// Endpoint to insert JSON data into the PostgreSQL database
-app.post('/api/loadData', async (req, res) => {
-    try {
-        console.log("Loading data into the database...");
-
-        // Read the JSON file
-        const data = JSON.parse(fs.readFileSync('./data/data.json', 'utf-8'));
-        const posts = data.posts;
-
-        // Insert each post into the database
-        for (const post of posts) {
-            await pool.query(
-                `INSERT INTO posts (date, author, profileImage, postImage, title, content, likes)
-                 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-                [
-                    post.date,
-                    post.author,
-                    post.profileImage,
-                    post.postImage,
-                    post.title,
-                    post.content,
-                    post.likes
-                ]
-            );
-        }
-
-        res.status(200).send({ message: "Data loaded successfully!" });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send({ error: "Error loading data into the database" });
-    }
-});
-
-// Endpoint to fetch all posts
-app.get('/api/posts', async (req, res) => {
-    try {
-        console.log("Fetching all posts...");
-
-        const allPosts = await pool.query("SELECT * FROM posts ORDER BY id");
-        res.json(allPosts.rows);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send({ error: "Error fetching posts" });
-    }
-});
-
-
-// Endpoint to create a new post
-app.post('/api/posts', async (req, res) => {
-    try {
-        console.log("Adding a new post...");
-        const { date, author, profileImage, postImage, title, content, likes } = req.body;
-
-        const newPost = await pool.query(
-            `INSERT INTO posts (date, author, profileImage, postImage, title, content, likes)
-             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            [date, author, profileImage, postImage, title, content, likes]
-        );
-
-        res.status(201).json(newPost.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send({ error: "Error adding a new post" });
-    }
-});
-
-// Endpoint to delete a post
-app.delete('/api/posts/:id', async (req, res) => {
-    try {
-        console.log("Deleting a post...");
-        const { id } = req.params;
-
-        const deleteResult = await pool.query(`DELETE FROM posts WHERE id = $1 RETURNING *`, [id]);
-
-        if (deleteResult.rows.length === 0) {
-            return res.status(404).send({ error: "Post not found" });
-        }
-
-        res.status(200).send({ message: "Post deleted successfully!" });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send({ error: "Error deleting post" });
-    }
-});
-
-// Endpoint to increment likes
-app.post('/api/posts/:id/like', async (req, res) => {
+// Delete a post
+app.delete('/posts/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-
-        const updateLikes = await pool.query(
-            `UPDATE posts SET likes = likes + 1 WHERE id = $1 RETURNING *`,
-            [id]
-        );
-
-        if (updateLikes.rows.length === 0) {
-            return res.status(404).send({ error: "Post not found" });
-        }
-
-        res.status(200).json(updateLikes.rows[0]);
+        console.log("delete a post request has arrived");
+        const deletePost = await pool.query("DELETE FROM posts WHERE id = $1", [id]);
+        res.json(deletePost);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send({ error: "Error liking post" });
+    }
+});
+app.put('/posts/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { body } = req.body;
+        console.log("update request has arrived");
+        const updatePost = await pool.query("UPDATE posts SET body = $1, date_updated = NOW() WHERE id = $2", [body, id]);
+        res.json(updatePost);
+    } catch (err) {
+        console.error(err.message);
     }
 });
 
