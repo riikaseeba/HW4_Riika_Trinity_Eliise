@@ -7,22 +7,15 @@
               <table>
                   <tbody>
                       <tr>
-                          <td><img :src="post.profileImage" alt="profile_picture" width="40" height="40"></td>
+                          <td></td>
                           <td><h1>{{ post.date }}</h1></td>
                       </tr>
                   </tbody>
               </table>
           </div>
-          <div class="postimg" v-if="post.postImage">
-              <img :src="post.postImage" width="500" height="500" alt="Post Image">
-          </div>
           <div class="postcap">
               <h3 v-if="post.title">{{ post.title }}</h3>
               <p>{{ post.content }}</p>
-          </div>
-          <div class="like-section">
-              <button @click="likePost">👍 Like</button>
-              <span>{{ post.likes }} likes</span>
           </div>
       </fieldset>
       <br>
@@ -46,9 +39,7 @@ export default {
     }
   },
   methods: {
-    likePost () {
-      this.$store.dispatch('likePost', this.post.id)
-    }
+  
   }
 }
 </script>
