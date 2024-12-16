@@ -13,8 +13,6 @@
       {
         "date": "Oct 1, 2024",  
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
-        "postImage": "img/food.jpg",
         "title": null,
         "content": "Went to my favorite restaurant. They served (as always) the best food in town.",
         "likes": 0
@@ -22,7 +20,6 @@
       {
         "date": "Sept 21, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
         "postImage": null,
         "title": "Exciting Cultural Event in Autumnal Tallinn",
         "content": "This autumn, Tallinn hosts several fascinating cultural events that attract both locals and tourists. A standout is the Tallinn Light Festival, where the streets of the Old Town are filled with mesmerizing light installations.",
@@ -31,7 +28,6 @@
       {
         "date": "Sept 10, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
         "postImage": null,
         "title": "Updates at the University of Tartu Library",
         "content": "The University of Tartu Library has undergone significant renovations, offering even more modern spaces for students and visitors. The spacious reading rooms and new digital resources make studying more convenient and productive.",
@@ -40,8 +36,6 @@
       {
         "date": "Aug 26, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
-        "postImage": "img/post04.jpg",
         "title": null,
         "content": "Tallinn Old Town - A UNESCO World Heritage Site",
         "likes": 0
@@ -49,8 +43,6 @@
       {
         "date": "Aug 20, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
-        "postImage": "img/post05.jpg",
         "title": null,
         "content": "Pärnu Beach - Estonia's Summer Capital",
         "likes": 0
@@ -58,8 +50,6 @@
       {
         "date": "Aug 10, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
-        "postImage": "img/post06.jpg",
         "title": "A Day at Lahemaa National Park",
         "content": "Visited Lahemaa National Park and enjoyed the serene landscapes, lush forests, and beautiful coastline. A perfect escape from the city!",
         "likes": 0
@@ -67,7 +57,6 @@
       {
         "date": "Jul 30, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
         "postImage": null,
         "title": "New Cafe in Town!",
         "content": "Discovered a cozy little cafe near the Town Hall Square. It’s perfect for relaxing with a book and a warm cup of coffee.",
@@ -76,8 +65,6 @@
       {
         "date": "Jul 15, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
-        "postImage": "img/post08.jpeg",
         "title": "Exploring Estonian Art Museum",
         "content": "Spent the afternoon exploring Estonian Art Museum. The exhibits showcase a fascinating range of local art, both traditional and contemporary.",
         "likes": 0
@@ -85,8 +72,6 @@
       {
         "date": "Jun 25, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
-        "postImage": "img/post09.jpg",
         "title": null,
         "content": "Took a refreshing swim at Pirita Beach. The summer weather made it the perfect day to enjoy Estonia’s beautiful coastline.",
         "likes": 0
@@ -94,8 +79,6 @@
       {
         "date": "Jun 5, 2024",
         "author": "Riika Seeba",
-        "profileImage": "img/Logo.png",
-        "postImage": "img/post10.jpg",
         "title": "Tallinn Botanic Garden Visit",
         "content": "Visited the Tallinn Botanic Garden today. Loved the colorful flower arrangements and peaceful walking paths!",
         "likes": 0

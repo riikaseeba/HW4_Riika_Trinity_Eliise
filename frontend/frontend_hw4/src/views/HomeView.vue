@@ -39,6 +39,9 @@ export default {
   methods: {
     // Logout method
     logout() {
+      fetch("http://localhost:3000/auth/logout", {
+        credentials: "include", 
+      })
       // Clear the user session (example: clearing token or state)
       this.$store.dispatch('logout');
       this.$router.push('/login'); // Redirect to the login page

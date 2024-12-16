@@ -36,12 +36,6 @@ export default createStore({
   },
   // likede osa
   mutations: {
-    incrementLikes (state, postId) {
-      const post = state.posts.find(post => post.id === postId)
-      if (post) {
-        post.likes++
-      }
-    },
     DELETE_ALL_POSTS(state) {
       state.posts = [];
     },
@@ -53,9 +47,6 @@ export default createStore({
     }
   },
   actions: {
-    likePost ({ commit }, postId) {
-      commit('incrementLikes', postId)
-    },
     resetLikes ({ commit }) {
       commit('resetAllLikes')
     },

@@ -32,8 +32,6 @@
          user_id uuid REFERENCES users(id), -- Links to the user's unique ID
          title TEXT, -- Title of the post
          body TEXT NOT NULL, -- The main content of the post
-         postImage TEXT, -- Image URL for the post
-         likes INT DEFAULT 0, -- Number of likes
          date_posted TIMESTAMP NOT NULL DEFAULT NOW(),
          date_updated TIMESTAMP
      );
