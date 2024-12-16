@@ -104,11 +104,17 @@ app.post('/auth/login',async(req,res) =>{
         const{email,password} = req.body;
         
         const user =await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-        if(user.rows.length===0) return res.status(401).json({error:"User is not registered"});
+        if(user.rows.length===0) {
+            console.log("kasutajat ei leidnud");
+            return res.status(401).json({error:"User is not registered"});
+        }
 
 
         const validPassword = await bcrypt.compare(password,user.rows[0].password);
-        if(!validPassword) return res.status(401).json({error: "Incorrect password"});
+        if(!validPassword) {
+            console.log("parool ei sobinud");
+            return res.status(401).json({error: "Incorrect password"});
+        }
         
         const token = generateJWT(user.rows[0].id);
         res
@@ -169,24 +175,7 @@ app.get('/api/posts', async (req, res) => {
 });
 
 
-// Endpoint to create a new post
-app.post('/api/posts', async (req, res) => {
-    try {
-        console.log("Adding a new post...");
-        const { date, author, profileImage, postImage, title, content, likes } = req.body;
 
-        const newPost = await pool.query(
-            `INSERT INTO posts (date, author, profileImage, postImage, title, content, likes)
-             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            [date, author, profileImage, postImage, title, content, likes]
-        );
-
-        res.status(201).json(newPost.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send({ error: "Error adding a new post" });
-    }
-});
 
 // Endpoint to delete a post
 app.delete('/api/posts/:id', async (req, res) => {
@@ -204,6 +193,18 @@ app.delete('/api/posts/:id', async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).send({ error: "Error deleting post" });
+    }
+});
+
+//adding new post
+app.post('/posts', authenticateToken, async (req, res) => {
+    try {
+        console.log("a post request has arrived");
+        const { user_id, body } = req.body;
+        const newPost = await pool.query("INSERT INTO posts (user_id, body) VALUES ($1, $2) RETURNING *", [user_id, body]);
+        res.json(newPost.rows[0]);
+    } catch (err) {
+        console.error(err.message);
     }
 });
 

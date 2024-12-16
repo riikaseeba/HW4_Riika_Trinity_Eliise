@@ -11,27 +11,53 @@
             placeholder="Enter post content"
           ></textarea>
         </div>
-        <button type="submit">Add Post</button>
+        <button @click="addPost" class="addPost">Add Post</button>
       </form>
     </main>
   </div>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      content: "", // Holds the post body
-    };
-  },
-  methods: {
-    handleSubmit() {
-      console.log("Post added:", { content: this.content });
-      // lisa siia loogika
+  export default {
+    name: "AddPost",
+    data() { /*initializes the component's data with a single property post, 
+    which is an object containing the post body as an empty string.*/
+      return {
+        post: {
+          body: "",
+        },
+      };
     },
-  },
-};
-</script>
+    methods: {
+      addPost() {
+        if (this.content.trim() === "") {
+          console.log("Post body cannot be empty.");
+          return;
+        }
+        var data = { //makes data object containing the post body
+          body: this.content,
+        };
+        fetch("http://localhost:3000/posts", { 
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+          credentials: "include",
+        })
+        .then((response) => { 
+          console.log(response.data);
+          // redirect to /allposts view
+          this.$router.push("/");
+        })
+        .catch((e) => {
+          console.log(e);
+          console.log("error");
+        });
+      },
+    },
+  };
+  </script>
 
 <style scoped>
 main {
