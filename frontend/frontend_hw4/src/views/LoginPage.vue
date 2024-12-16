@@ -63,7 +63,6 @@
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          coockiedata.user_id
         })
       }
     }
