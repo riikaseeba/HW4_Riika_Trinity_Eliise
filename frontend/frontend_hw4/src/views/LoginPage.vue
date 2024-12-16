@@ -44,7 +44,6 @@
   
   
   LogIn() { //called when the "LogIn" button is clicked
-        // Basic form validation
         if (!this.email || !this.password) {
           console.error("Please fill in all fields");
           return;
@@ -53,29 +52,22 @@
           email: this.email,
           password: this.password
         };
-        // using Fetch - post method - send an HTTP post request to the specified URI with the defined body
-        fetch("http://localhost:3000/auth/login", { //Uses the fetch API to send a POST request to the server
+        const response = fetch("http://localhost:3000/auth/login", { 
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
             credentials: 'include', 
-            body: JSON.stringify(data),
+            body: JSON.stringify(data)
         })
         .then((response) => response.json())
         .then((data) => {
-        console.log(data);
-        //this.$router.push("/");
-        location.assign("/");
+          console.log(data);
+          coockiedata.user_id
         })
-        .catch((e) => {
-          console.log(e);
-          console.log("error");
-        });
-      },
-    }, 
+      }
     }
-  
+  }
   </script>
 
 <style scoped>
