@@ -10,12 +10,9 @@
     </div>
 
     <!-- Blog Posts Loop -->
-    <div class="blog-posts">
-      <BlogPost
-        v-for="post in posts"
-        :key="post.id"
-        :postId="post.id"
-      /></div>
+    <div class="blog-posts" v-if="posts && posts.length > 0">
+      <BlogPost :posts="posts" />
+    </div>
   </div>
 </template>
 
@@ -39,34 +36,63 @@ export default {
   },
   computed: {
   },
-  methods: {
-    LogOut: async function() {
-      fetch("http://localhost:3000/auth/logout", {
-        credentials: 'include'
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        console.log('jwt removed');
-        //console.log('jwt removed:' + auth.authenticated());
-        this.$router.push("/login");
-        //location.assign("/");
-      })
-      .catch((e) => {
-        console.log(e);
-        console.log("error logout");
+  mounted() {
+  this.fetchPosts();
+},
+methods: {
+  async fetchPosts() {
+    try {
+      const response = await fetch("http://localhost:3000/api/posts", {
+        method: "GET",
+        credentials: "include"
       });
-    },
-    },
-    DeleteAll: async function() {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      this.posts = data;
+    } catch (error) {
+      console.error("Error fetching posts:", error.message);
+    }
+  },
+
+  async deleteAllPosts() {
+    try {
       const response = await fetch("http://localhost:3000/api/posts", {
         method: "DELETE",
-        credentials: 'include'
+        credentials: "include"
       });
-      console.log(response);
-      location.reload()
+      if (!response.ok) {
+        throw new Error("Failed to delete all posts.");
+      }
+      this.fetchPosts(); // Reload posts
+    } catch (error) {
+      console.error(error.message);
     }
-  }
+  },
+
+  goToAddPost() {
+    this.$router.push("/add-post");
+  },
+  async Logout() {
+      try {
+        const response = await fetch('http://localhost:3000/auth/logout', {
+          method: 'GET',
+          credentials: 'include', 
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to log out');
+        }
+
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Error logging out:', error.message);
+      }
+    },
+  },
+}
+
 </script>
 <style scoped>
 .header {

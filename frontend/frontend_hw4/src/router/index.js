@@ -27,7 +27,7 @@ const routes = [
     component: SignUp
   },
   {
-    path: '/AddPost',
+    path: '/add-post',
     name: 'AddPost',
     component: AddPost,
     beforeEnter: async(to, from, next) => {

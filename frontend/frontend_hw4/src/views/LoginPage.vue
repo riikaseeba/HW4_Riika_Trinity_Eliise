@@ -26,7 +26,9 @@
      password: ''
     }
     },
+    
     methods: {
+
       LogIn() {
       var data = {
         email: this.email,

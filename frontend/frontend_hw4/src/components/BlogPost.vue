@@ -1,45 +1,49 @@
 
 <template>
-  <div  @click="ClickedAPost(postInfo.id)"  class="posts">
+  <div v-if="posts && posts.length > 0">
+    <div v-for="post in posts" :key="post.id" class="posts" @click="clickedAPost(post.id)">
       <br>
-      <fieldset class="post" :id="'post' + post.id" >
+      <fieldset class="post" >
           <div class="posthead">
               <table>
                   <tbody>
                       <tr>
                           <td></td>
-                          <td><h1>{{ post.date }}</h1></td>
+                          <td><h1>{{ Date(post.post_date) }}</h1></td>
                       </tr>
                   </tbody>
               </table>
           </div>
           <div class="postcap">
-              <h3 v-if="post.title">{{ post.title }}</h3>
-              <p>{{ post.content }}</p>
+              <h3 >{{ post.body }}</h3>
+
           </div>
       </fieldset>
       <br>
   </div>
+  </div>
+  
 </template>
 
 <script>
 export default {
   name: 'BlogPost',
   props: {
-    postId: Number // We expect the post ID to be passed as a prop
+    posts: []
   },
-  computed: {
-    post () {
-      // Directly accessing the post from the store's state using this.$store
-      return this.$store.state.posts.find(post => post.id === this.postId) || null
-    },
-    formattedDate() {
-      // Format the date using a helper function
-      return this.formatDate(this.post.date);
-    }
-  },
+  // computed: {
+  //   post () {
+  //     // Directly accessing the post from the store's state using this.$store
+  //     console.log(this.postId);
+  //     return this.$store.state.posts.find(post => post.id === this.postId)
+  //   },
+  //   formattedDate() {
+  //     // Format the date using a helper function
+  //     // return this.formatDate(this.post.date);
+  //   }
+  // },
   methods: {
-    ClickedAPost(postId) {
+    clickedAPost(postId) {
             this.$router.push(`/UpdatePostView/${postId}`);
         }
   }

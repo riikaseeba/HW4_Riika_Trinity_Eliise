@@ -24,38 +24,37 @@ const generateJWT = (id) => {
 }
 
 
-
-function authenticateToken(req, res, next) {
-    const token = req.cookies.jwt;
-    if (!token) return res.sendStatus(401); // if there isn't any token
-
-    jwt.verify(token, secret, (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next(); // pass the execution off to whatever request the client intended
-    });
-}
-
 app.listen(port, () => {
     console.log("Server is listening to port " + port)
 });
 
 
+
+
 /* Handling HTTP requests */
 
+//adding a post
     app.post('/api/posts', async(req, res) => {
         try {
             console.log("a post request has arrived");
-            const post = req.body;
-            const newpost = await pool.query(
-                "INSERT INTO posttable(body, post_date) values ($1, $2) RETURNING*", [post.body, new Date()]
+            const { body } = req.body;
+            if (!body) {
+                return res.status(400).json({ error: "Content is required" });
+            }
+    
+            const post_date = new Date();
+
+            const newPost = await pool.query(
+                "INSERT INTO posttable (post_date, body) VALUES ($1, $2) RETURNING *",
+                [post_date, body]
             );
-            res.json(newpost);
+
+            res.status(201).json(newPost.rows[0]);
         } catch (err) {
             console.error(err.message);
         }
     });
-
+//deleting all posts
     app.delete("/api/posts", async(req, res) => {
         try {
             console.log("removing all posts")
@@ -68,9 +67,11 @@ app.listen(port, () => {
         }
     })
 
+//get post by id
+
     app.get('/api/posts/:id', async(req, res) => {
         try {
-            console.log("get a post with route parameter  request has arrived");
+            console.log("get a post with route parameter request has arrived");
             // The req.params property is an object containing properties mapped to the named route "parameters". 
             // For example, if you have the route /posts/:id, then the "id" property is available as req.params.id.
             const { id } = req.params; // assigning all route "parameters" to the id "object"
@@ -85,24 +86,26 @@ app.listen(port, () => {
             console.error(err.message);
         }
     });
+
+ //update a post
     app.put('/api/posts/:id', async(req, res) => {
         try {
             const { id } = req.params;
             const post = req.body;
             console.log("update request has arrived");
             const updatepost = await pool.query(
-                "UPDATE posttable SET (body, post_date) = ($2, $3) WHERE id = $1", [id, post.body, new Date()]
+                "UPDATE posttable SET body = $2 WHERE id = $1", [id, post.body]
             );
             res.json(updatepost);
         } catch (err) {
             console.error(err.message);
         }
     });
-    
+
+//delete by id
     app.delete('/api/posts/:id', async(req, res) => {
         try {
             const { id } = req.params;
-            //const post = req.body; // we do not need a body for a delete request
             console.log("delete a post request has arrived");
             const deletepost = await pool.query(
                 "DELETE FROM posttable WHERE id = $1", [id]
@@ -113,6 +116,7 @@ app.listen(port, () => {
         }
     }); 
     
+// get all postst
     app.get('/api/posts', async(req, res) => {
         try {
             console.log("get posts request has arrived");
@@ -124,7 +128,6 @@ app.listen(port, () => {
             console.error(err.message);
         }
     });
-
 
 
 app.get('/auth/authenticate', async(req, res) => {
@@ -198,7 +201,7 @@ app.post('/auth/login',async(req,res) =>{
             return res.status(401).json({error:"User is not registered"});
         }
 
-
+        // validatin password
         const validPassword = await bcrypt.compare(password,user.rows[0].password);
         console.log("validPassword:" + validPassword);
         if(!validPassword) {

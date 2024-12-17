@@ -1,29 +1,25 @@
 <template>
   <div class="signup">
     <h1>Signup Page</h1>
-
-    <label for="email">Email:</label>
-    <input
-      type="email" name="email"  required v-model="email"
-    />
-    <br>
-
     <form>
-      <label for="password">Password:</label>
-      <input
-        type="password" name="password" required v-model="password"
-      />
+      <label for="email">Email:</label>
+      <input type="email" name="email"  required v-model="email"/>
+
       <br>
-      <label for="confirm-password">Confirm Password:</label>
-      <input
-        :type="showPassword ? 'text' : 'password'"
-        v-model="confirmPassword"
-        id="confirm-password"
-        placeholder="Confirm Password"
-      />
-      <br>
-      <button @click="SignUp" class="Signup">SignUp</button>
-    </form>
+    
+        <label for="password">Password:</label>
+        <input type="password" name="password" required v-model="password"/>
+
+        <br>
+
+        <label for="confirm-password">Confirm Password:</label>
+        <input
+          :type="showPassword ? 'text' : 'password'"
+          v-model="confirmPassword" id="confirm-password" placeholder="Confirm Password"/>
+        <br>
+
+        <button @click="SignUp" class="Signup">SignUp</button>
+     </form>
   </div>
 </template>
 
@@ -57,7 +53,6 @@ SignUp() {
       .then((data) => {
       console.log(data);
       this.$router.push("/");
-      //location.assign("/");
       })
       .catch((e) => {
         console.log(e);
