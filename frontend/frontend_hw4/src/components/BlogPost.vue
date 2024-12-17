@@ -1,6 +1,6 @@
 
 <template>
-  <div class="posts">
+  <div  @click="ClickedAPost(postInfo.id)"  class="posts">
       <br>
       <fieldset class="post" :id="'post' + post.id" >
           <div class="posthead">
@@ -39,7 +39,9 @@ export default {
     }
   },
   methods: {
-  
+    ClickedAPost(postId) {
+            this.$router.push(`/UpdatePostView/${postId}`);
+        }
   }
 }
 </script>

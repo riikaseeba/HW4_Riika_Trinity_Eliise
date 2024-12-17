@@ -4,30 +4,40 @@ import AddPost from '../views/AddPost.vue'
 import SignUp from '@/views/SignUp.vue'
 import LoginPage from '../views/LoginPage.vue';
 import ContactUs from '@/views/ContactUs.vue';
+import auth from '@/auth';
+import UpdatePostView from "../views/UpdatePostView"
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/AddPost',
-    name: 'AddPost',
-    component: AddPost
+    component: HomeView,
+    beforeEnter: async(to, from, next) => {
+      let authResult = await auth.authenticated();
+      if (!authResult) {
+          next('/login')
+      } else {
+          next();
+      }
+  }
   },
   {
     path: '/signup',
-    name: 'sugnup',
+    name: 'Signup',
     component: SignUp
   },
   {
     path: '/AddPost',
     name: 'AddPost',
-    // route level code-splitting
-    // this generates a separate chunk (AddPost.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "AddPost" */ '../views/AddPost.vue')
+    component: AddPost,
+    beforeEnter: async(to, from, next) => {
+      let authResult = await auth.authenticated();
+      if (!authResult) {
+          next('/login')
+      } else {
+          next();
+      }
+  }
   },
   {
     path: '/login',
@@ -37,6 +47,19 @@ const routes = [
   { path: '/contact', 
     name: 'contact', 
     component: ContactUs },
+  {
+    path: "/UpdatePostView/:id",
+    name: "UpdatePostView",
+    component: UpdatePostView,
+    beforeEnter: async(to, from, next) => {
+      let authResult = await auth.authenticated();
+      if (!authResult) {
+          next('/login')
+      } else {
+          next();
+      }
+    }
+  }
 
 ]
 

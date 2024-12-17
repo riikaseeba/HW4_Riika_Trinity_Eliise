@@ -11,14 +11,59 @@
             placeholder="Enter post content"
           ></textarea>
         </div>
-        <button type="submit">Add Post</button>
+        <button  @click="addPost" >Add Post</button>
       </form>
     </main>
   </div>
 </template>
 
 <script>
-export default {
+  export default {
+    name: "AddPost",
+    data() { /*initializes the component's data with a single property post, 
+    which is an object containing the post body as an empty string.*/
+      return {
+        post: {
+          body: "",
+        },
+      };
+    },
+    methods: {
+      addPost() {
+        if (this.content.trim() === "") {
+          console.log("Post body cannot be empty.");
+          return;
+        }
+        var data = { //makes data object containing the post body
+          body: this.content,
+        };
+        fetch("http://localhost:3000/api/posts", { 
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(data),
+          
+        })
+        .then((response) => { 
+          if (!response.ok) {
+          // Handle HTTP errors
+          throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+        console.log("Post added:", data);
+        this.$router.push("/"); // Redirect to the desired page
+        })
+        .catch((e) => {
+          console.log("Error adding post:", e.message);
+        });
+      },
+    },
+  };
+/*export default {
   data() {
     return {
       content: "", // Holds the post body
@@ -39,7 +84,7 @@ export default {
       this.$router.push("/");
     },
   },
-};
+};*/
 </script>
 
 <style scoped>

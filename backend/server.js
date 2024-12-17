@@ -23,9 +23,7 @@ const generateJWT = (id) => {
     return jwt.sign({ id }, secret, { expiresIn: maxAge })
 }
 
-app.listen(port, () => {
-    console.log("Server is listening to port " + port)
-});
+
 
 function authenticateToken(req, res, next) {
     const token = req.cookies.jwt;
@@ -38,8 +36,96 @@ function authenticateToken(req, res, next) {
     });
 }
 
+app.listen(port, () => {
+    console.log("Server is listening to port " + port)
+});
+
 
 /* Handling HTTP requests */
+
+    app.post('/api/posts', async(req, res) => {
+        try {
+            console.log("a post request has arrived");
+            const post = req.body;
+            const newpost = await pool.query(
+                "INSERT INTO posttable(body, post_date) values ($1, $2) RETURNING*", [post.body, new Date()]
+            );
+            res.json(newpost);
+        } catch (err) {
+            console.error(err.message);
+        }
+    });
+
+    app.delete("/api/posts", async(req, res) => {
+        try {
+            console.log("removing all posts")
+            const response = await pool.query(
+                "TRUNCATE posttable"
+            );
+            res.json(response);
+        } catch(err) {
+            console.log(err)
+        }
+    })
+
+    app.get('/api/posts/:id', async(req, res) => {
+        try {
+            console.log("get a post with route parameter  request has arrived");
+            // The req.params property is an object containing properties mapped to the named route "parameters". 
+            // For example, if you have the route /posts/:id, then the "id" property is available as req.params.id.
+            const { id } = req.params; // assigning all route "parameters" to the id "object"
+            const posts = await pool.query( // pool.query runs a single query on the database.
+                //$1 is mapped to the first element of { id } (which is just the value of id). 
+                "SELECT * FROM posttable WHERE id = $1", [id]
+            );
+            res.json(posts.rows[0]); // we already know that the row array contains a single element, and here we are trying to access it
+            // The res.json() function sends a JSON response. 
+            // This method sends a response (with the correct content-type) that is the parameter converted to a JSON string using the JSON.stringify() method.
+        } catch (err) {
+            console.error(err.message);
+        }
+    });
+    app.put('/api/posts/:id', async(req, res) => {
+        try {
+            const { id } = req.params;
+            const post = req.body;
+            console.log("update request has arrived");
+            const updatepost = await pool.query(
+                "UPDATE posttable SET (body, post_date) = ($2, $3) WHERE id = $1", [id, post.body, new Date()]
+            );
+            res.json(updatepost);
+        } catch (err) {
+            console.error(err.message);
+        }
+    });
+    
+    app.delete('/api/posts/:id', async(req, res) => {
+        try {
+            const { id } = req.params;
+            //const post = req.body; // we do not need a body for a delete request
+            console.log("delete a post request has arrived");
+            const deletepost = await pool.query(
+                "DELETE FROM posttable WHERE id = $1", [id]
+            );
+            res.json(deletepost);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }); 
+    
+    app.get('/api/posts', async(req, res) => {
+        try {
+            console.log("get posts request has arrived");
+            const posts = await pool.query(
+                "SELECT * FROM posttable"
+            );
+            res.json(posts.rows);
+        } catch (err) {
+            console.error(err.message);
+        }
+    });
+
+
 
 app.get('/auth/authenticate', async(req, res) => {
     console.log('authentication request has been arrived');
@@ -85,6 +171,9 @@ app.post('/auth/signup', async (req,res) => {
         const authuser = await pool.query("INSERT INTO users(email, password) values ($1, $2) RETURNING*", [email, bcryptPassword]);
         console.log(authuser.rows[0].id);
         const token = await generateJWT(authuser.rows[0].id);
+        //console.log(token);
+        //res.cookie("isAuthorized", true, { maxAge: 1000 * 60, httpOnly: true });
+        //res.cookie('jwt', token, { maxAge: 6000000, httpOnly: true });
         res
             .status(201)
             .cookie('jwt', token, { maxAge: 6000000, httpOnly: true })
@@ -104,16 +193,23 @@ app.post('/auth/login',async(req,res) =>{
         const{email,password} = req.body;
         
         const user =await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-        if(user.rows.length===0) return res.status(401).json({error:"User is not registered"});
+        if(user.rows.length===0) {
+            console.log("User is not registered");
+            return res.status(401).json({error:"User is not registered"});
+        }
 
 
         const validPassword = await bcrypt.compare(password,user.rows[0].password);
-        if(!validPassword) return res.status(401).json({error: "Incorrect password"});
+        console.log("validPassword:" + validPassword);
+        if(!validPassword) {
+            console.log("Incorrect password");
+            return res.status(401).json({error: "Incorrect password"});
+        }
         
-        const token = generateJWT(user.rows[0].id);
+        const token = await generateJWT(user.rows[0].id);
         res
             .status(201)
-            .cookie('jwt', token, { maxAge: maxAge * 1000, httpOnly: true })
+            .cookie('jwt', token, { maxAge: 6000000, httpOnly: true })
             .json({user_id:user.rows[0].id})
             .send;
     }catch(error){
@@ -121,6 +217,42 @@ app.post('/auth/login',async(req,res) =>{
     }
 });
 
+/*// Endpoint to create a new post
+app.post('/api/posts', authenticateToken, async (req, res) => {
+    try {
+        const { title, body } = req.body;
+        const user_id = req.user.id;  // Assuming 'authenticateToken' middleware adds 'user' to req
+        
+        if (!title || !body) {
+            return res.status(400).json({ error: "Title and body are required" });
+        }
+
+        const result = await pool.query(
+            `INSERT INTO posts (user_id, title, body, date_posted, date_updated)
+             VALUES ($1, $2, $3, NOW(), NOW())
+             RETURNING id, user_id, title, body, date_posted, date_updated`,
+            [user_id, title, body]
+        );
+
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send({ error: "Error creating new post" });
+    }
+});
+
+// Endpoint to fetch all posts
+app.get('/api/posts', async (req, res) => {
+    try {
+        console.log("Fetching all posts...");
+
+        const allPosts = await pool.query("SELECT * FROM posts ORDER BY id");
+        res.json(allPosts.rows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send({ error: "Error fetching posts" });
+    }
+});
 
 // Delete a post
 app.delete('/posts/:id', authenticateToken, async (req, res) => {
@@ -132,8 +264,8 @@ app.delete('/posts/:id', authenticateToken, async (req, res) => {
     } catch (err) {
         console.error(err.message);
     }
-});
-app.put('/posts/:id', authenticateToken, async (req, res) => {
+});*/
+/*app.put('/posts/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { body } = req.body;
@@ -143,10 +275,12 @@ app.put('/posts/:id', authenticateToken, async (req, res) => {
     } catch (err) {
         console.error(err.message);
     }
-});
+});*/
 
 
 //loggout
 app.get('/auth/logout', (req, res) => {
+    console.log('delete jwt request arrived');
     res.status(202).clearCookie('jwt').json({ "Msg": "cookie cleared" }).send
 });
+

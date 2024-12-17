@@ -4,7 +4,7 @@
     <p>Explore the latest posts below:</p>
     <!-- Header Section -->
     <div class="header">
-      <button class="logout-btn" @click="logout">Logout</button>
+      <button v-if = "authResult" @click="Logout" class="center">Logout</button>
       <button class="add-btn" @click="goToAddPost">Add Post</button>
       <button class="delete-all-btn" @click="deleteAllPosts">Delete All</button>
     </div>
@@ -23,41 +23,50 @@
 import BlogPost from '@/components/BlogPost.vue'
 
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+//import HelloWorld from '@/components/HelloWorld.vue'
+import auth from "../auth";
 
 export default {
   name: 'HomeView',
-  components: {
-    HelloWorld, BlogPost
+  components: { 
+    BlogPost
+  },
+  data: function() {
+    return {
+    posts:[ ],
+    authResult: auth.authenticated()
+    }
   },
   computed: {
-    // Fetch all posts from Vuex store
-    posts () {
-      return this.$store.getters.allPosts
-    }
   },
   methods: {
-    // Logout method
-    logout() {
+    LogOut: async function() {
       fetch("http://localhost:3000/auth/logout", {
-        credentials: "include", 
+        credentials: 'include'
       })
-      // Clear the user session (example: clearing token or state)
-      this.$store.dispatch('logout');
-      this.$router.push('/login'); // Redirect to the login page
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        console.log('jwt removed');
+        //console.log('jwt removed:' + auth.authenticated());
+        this.$router.push("/login");
+        //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error logout");
+      });
     },
-    // Navigate to "Add Post" page
-    goToAddPost() {
-      this.$router.push('/AddPost');
     },
-    // Delete all posts
-    deleteAllPosts() {
-      if (confirm('Are you sure you want to delete all posts?')) {
-        this.$store.dispatch('deleteAllPosts');
-      }
+    DeleteAll: async function() {
+      const response = await fetch("http://localhost:3000/api/posts", {
+        method: "DELETE",
+        credentials: 'include'
+      });
+      console.log(response);
+      location.reload()
     }
   }
-}
 </script>
 <style scoped>
 .header {

@@ -8,10 +8,11 @@
      port: "5432"
  });
 
- const execute = async(query) => {
+ const execute = async(query1, query2) => {
      try {
          await pool.connect(); // create a connection
-         await pool.query(query); // executes the provided query
+         await pool.query(query1); // executes the provided query
+         await pool.query(query2);
          return true;
      } catch (error) {
          console.error(error.stack);
@@ -27,30 +28,18 @@
      );`;
 
      const createPostsTblQuery = `
-     CREATE TABLE IF NOT EXISTS "posts" (
-         id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-         user_id uuid REFERENCES users(id), -- Links to the user's unique ID
-         title TEXT, -- Title of the post
-         body TEXT NOT NULL, -- The main content of the post
-         date_posted TIMESTAMP NOT NULL DEFAULT NOW(),
-         date_updated TIMESTAMP
-     );
- `;
+     CREATE TABLE IF NOT EXISTS "posttable" (
+        "id" SERIAL PRIMARY KEY,         
+        "body" VARCHAR(200) NOT NULL,
+        "post_date" DATE NOT NULL
+        );`;
 
 
- execute(createTblQuery) //creates the "users" table.
+ execute(createTblQuery, createPostsTblQuery) //creates the "users" table.
      .then(result => {
          if (result) {
-             console.log('Table "users" is created');
-             // After creating users table it can create posts table
-             //bcus posts has link to users
-             return execute(createPostsTblQuery);
+             console.log('Table "users" is created and Table "posttable" is created');
          }
      })
-     .then(result => {
-         if (result) {
-             console.log('Table "posts" is created');
-         }
-     });
 
  module.exports = pool;

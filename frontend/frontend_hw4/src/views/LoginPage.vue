@@ -1,32 +1,18 @@
 <template>
   <div class="login-container">
     <h1>Login Page</h1>
-    <form @submit.prevent="handleLogin">
       <div class="form-group">
         <label for="email">Email:</label>
-        <input
-          id="email"
-          type="email"
-          v-model="email"
-          placeholder="Email"
-          required
-        />
+        <input type="email" name="email"  required v-model="email"/>
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input
-          id="password"
-          type="password"
-          v-model="password"
-          placeholder="Password"
-          required
-        />
+        <input type="password" name="password" required v-model="password"/>
       </div>
       <div class ="container">
         <button @click="LogIn"  class="center">LogIn</button>
         <button @click='this.$router.push("/signup")' class="center">SignUp</button>
       </div>
-    </form>
   </div>
 </template>
 
@@ -37,34 +23,35 @@
   data: function() {
       return {
      email: '',
-     password: '',
+     password: ''
     }
     },
     methods: {
-  
-  
-  LogIn() { //called when the "LogIn" button is clicked
-        if (!this.email || !this.password) {
-          console.error("Please fill in all fields");
-          return;
-        }
-        var data = {
-          email: this.email,
-          password: this.password
-        };
-        const response = fetch("http://localhost:3000/auth/login", { 
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-            credentials: 'include', 
-            body: JSON.stringify(data)
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        })
-      }
+      LogIn() {
+      var data = {
+        email: this.email,
+        password: this.password
+      };
+      // using Fetch - post method - send an HTTP post request to the specified URI with the defined body
+      fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+          body: JSON.stringify(data),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      //this.$router.push("/");
+      location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
+    },
     }
   }
   </script>
